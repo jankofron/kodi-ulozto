@@ -1,5 +1,4 @@
 # kodi-ulozto
-Kodi addon
 Addon for playing video files stored on a private [Uloz.to Disk](https://uloz.to). Only **Kodi 21** is supported at the time.
 
 # Installation
