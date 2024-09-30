@@ -239,9 +239,13 @@ if __name__ == '__main__':
 
     else:
         authenticate()
+        if session is None:
+            sys.exit(0)
+
         RECS_FOLDER_SLUG = get_remote_slug(settings.getString('root-folder'))
 
         if RECS_FOLDER_SLUG is None:
             exit(0)
 
     router(params)
+
