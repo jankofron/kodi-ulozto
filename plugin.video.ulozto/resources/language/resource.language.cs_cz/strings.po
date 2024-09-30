@@ -1,0 +1,30 @@
+msgid ""
+msgstr ""
+
+msgctxt "Addon Summary"
+msgid "Uloz.to Private Disk Player"
+msgstr "Přehrávač soukromého disku Ulož.to"
+
+msgctxt "Addon Description"
+msgid "Allows you to directly play the content stored on the Uloz.to Disk."
+msgstr "Umožňuje prohlížet a přehrávat filmy na disku Ulož.to."
+
+msgctxt "#30000"
+msgid "Settings"
+msgstr "Nastavení"
+
+msgctxt "#30001"
+msgid "Username"
+msgstr "Uživatelské jméno"
+
+msgctxt "#30002"
+msgid "Auth token"
+msgstr "Auth token"
+
+msgctxt "#30003"
+msgid "API token"
+msgstr "API token"
+
+msgctxt "#30004"
+msgid "Folder name"
+msgstr "Název složky"

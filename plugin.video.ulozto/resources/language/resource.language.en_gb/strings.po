@@ -1,0 +1,30 @@
+msgid ""
+msgstr ""
+
+msgctxt "Addon Summary"
+msgid "Uloz.to Private Disk Player"
+msgstr ""
+
+msgctxt "Addon Description"
+msgid "Allows you to directly play the content stored on the Uloz.to Disk."
+msgstr ""
+
+msgctxt "#30000"
+msgid "Settings"
+msgstr "Settings"
+
+msgctxt "#30001"
+msgid "Username"
+msgstr "Username"
+
+msgctxt "#30002"
+msgid "Auth token"
+msgstr "Auth token"
+
+msgctxt "#30003"
+msgid "API token"
+msgstr "API token"
+
+msgctxt "#30004"
+msgid "Folder name"
+msgstr "Folder name"
