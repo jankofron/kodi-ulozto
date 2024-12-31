@@ -1,14 +1,6 @@
 msgid ""
 msgstr ""
 
-msgctxt "Addon Summary"
-msgid "Uloz.to Private Disk Player"
-msgstr "Přehrávač soukromého disku Ulož.to"
-
-msgctxt "Addon Description"
-msgid "Allows you to directly play the content stored on the Uloz.to Disk."
-msgstr "Umožňuje prohlížet a přehrávat filmy na disku Ulož.to."
-
 msgctxt "#30000"
 msgid "Settings"
 msgstr "Nastavení"
@@ -28,3 +20,31 @@ msgstr "API token"
 msgctxt "#30004"
 msgid "Folder name"
 msgstr "Název složky"
+
+msgctxt "#30005"
+msgid "Wrong login credentials"
+msgstr "Chybné přihlašovací údaje"
+
+msgctxt "#30006"
+msgid "Login failed"
+msgstr "Přihlášení selhalo"
+
+msgctxt "#30007"
+msgid "Failed to get the movie link"
+msgstr "Chyba při získání odkazu na film"
+
+msgctxt "#30008"
+msgid "Failed to access remote folder, check settings"
+msgstr "Chyba při přístupu ke vzdálené složce, zkontrolujte nastavení"
+
+msgctxt "#30009"
+msgid "Enter TMDB ID"
+msgstr "Vložte TMDB ID"
+
+msgctxt "#30010"
+msgid "Updating library"
+msgstr "Aktualizace knihovny"
+
+msgctxt "#30011"
+msgid "Library update in progress..."
+msgstr "Probíhá aktualizace..."

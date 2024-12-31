@@ -18,10 +18,23 @@
     <disclaimer lang="en">No warranty whatsoever</disclaimer>
     <platform>all</platform>
     <license>GPL-2.0-or-later</license>
-    <email>jan.kofron@gmail.com</email> <!-- may be omitted -->
+    <email>jan.kofron@gmail.com</email>
     <assets>
         <icon>resources/icon.png</icon>
     </assets>
   </extension>
+<extension point="kodi.context.item">
+  <menu id="kodi.core.main">
+    <item library="update_library.py">
+      <label lang="en">Update library</label>
+      <label lang="cs_CZ">Aktualizovat knihovnu</label>
+      <visible>true</visible>
+    </item>
+    <item library="update_item.py">
+      <label lang="en">Edit item</label>
+      <label lang="cs_CZ">Upravit</label>
+      <visible>true</visible>
+    </item>
+  </menu>
+</extension>
 </addon>
-
