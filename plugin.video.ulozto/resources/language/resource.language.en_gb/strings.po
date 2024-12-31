@@ -1,14 +1,6 @@
 msgid ""
 msgstr ""
 
-msgctxt "Addon Summary"
-msgid "Uloz.to Private Disk Player"
-msgstr ""
-
-msgctxt "Addon Description"
-msgid "Allows you to directly play the content stored on the Uloz.to Disk."
-msgstr ""
-
 msgctxt "#30000"
 msgid "Settings"
 msgstr "Settings"
@@ -28,3 +20,48 @@ msgstr "API token"
 msgctxt "#30004"
 msgid "Folder name"
 msgstr "Folder name"
+
+msgctxt "#30005"
+msgid "Wrong login credentials"
+msgstr "Wrong login credentials"
+
+msgctxt "#30006"
+msgid "Login failed"
+msgstr "Login failed"
+
+msgctxt "#30007"
+msgid "Failed to get the movie link"
+msgstr "Failed to get the movie link"
+
+msgctxt "#30008"
+msgid "Failed to access remote folder, check settings"
+msgstr "Failed to access remote folder, check settings"
+
+msgctxt "#30009"
+msgid "Enter TMDB ID"
+msgstr "Enter TMDB ID"
+
+msgctxt "#30010"
+msgid "Updating library"
+msgstr "Updating library"
+
+msgctxt "#30011"
+msgid "Library update in progress..."
+msgstr "Library update in progress..."
+
+msgctxt "#30012"
+msgid "Update library"
+msgstr "Update library"
+
+msgctxt "#30013"
+msgid "Enter manually"
+msgstr "Enter manually"
+
+msgctxt "#30014"
+msgid "Language code for TMDB content"
+msgstr "Language code for TMDB content"
+
+msgctxt "#30015"
+msgid "Record not found"
+msgstr "Record not found"
+
