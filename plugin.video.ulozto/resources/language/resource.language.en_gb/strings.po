@@ -65,3 +65,15 @@ msgctxt "#30015"
 msgid "Record not found"
 msgstr "Record not found"
 
+msgctxt "#30016"
+msgid "TMDB key file"
+msgstr "TMDB key file"
+
+msgctxt "#30017"
+msgid "TMDB API key not found, check settings"
+msgstr "TMDB API key not found, check settings"
+
+msgctxt "#30018"
+msgid "TMDB API key"
+msgstr "TMDB API key"
+

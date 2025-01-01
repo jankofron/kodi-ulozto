@@ -65,3 +65,15 @@ msgctxt "#30015"
 msgid "Record not found"
 msgstr "Záznam nenalezen"
 
+msgctxt "#30016"
+msgid "TMDB key file"
+msgstr "Soubor s API klíčem pro TMDB"
+
+msgctxt "#30017"
+msgid "TMDB API key not found, check settings"
+msgstr "TMDB API klíč nenalezen, zkontroujte nastavení"
+
+msgctxt "#30018"
+msgid "TMDB API key"
+msgstr "TMDB API klíč"
+

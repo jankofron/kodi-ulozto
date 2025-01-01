@@ -16,7 +16,7 @@ DB_FILE = 'movies.sqlite'
 DB_TABLE = 'movies'
 TMDB_REQUEST_HEADERS = {
     "accept": "application/json",
-    "Authorization": "{}"
+    "Authorization": "Key required"
 }
 
 global pd
@@ -25,8 +25,10 @@ global SESSION_KEY
 global COVERART_FOLDER
 global DB_FILENAME
 global DATA_FOLDER
+global API_KEY
 global addon
 global lang
+
 
 class CancelException(Exception):
     pass
@@ -36,28 +38,29 @@ def get_movie_details_by_id(id: str) -> dict:
     url_movie = URL_ID.format(MOVIE, id, lang)
     url_series = URL_ID.format(SERIES, id, lang)
 
-    xbmc.log('Getting movie details for {}'.format(id), xbmc.LOGDEBUG)
+    xbmc.log('Getting movie details for {}'.format(id), xbmc.LOGINFO)
     response = requests.get(url_movie, headers=TMDB_REQUEST_HEADERS)
-    # xbmc.log('Session headers: {}'.format(str(TMDB_REQUEST_HEADERS)), xbmc.LOGDEBUG)
 
     if response.status_code == 200:
         data = response.json()
-        xbmc.log('Movie details obtained: {}'.format(data), xbmc.LOGDEBUG)
+        xbmc.log('Movie details obtained: {}'.format(data), xbmc.LOGINFO)
 
         if 'poster_path' in data.keys() and data['poster_path'] is not None:
             get_art(data['poster_path'])
+
+        if 'backdrop_path' in data.keys() and data['backdrop_path'] is not None:
+            get_art(data['backdrop_path'])
 
         return data
 
     else:
         # we try series
-        xbmc.log('Getting series details for {}'.format(id), xbmc.LOGDEBUG)
         response = requests.get(url_series, headers=TMDB_REQUEST_HEADERS)
-        # xbmc.log('Session headers: {}'.format(str(TMDB_REQUEST_HEADERS)), xbmc.LOGDEBUG)
+        xbmc.log('Session headers: {}'.format(str(TMDB_REQUEST_HEADERS)), xbmc.LOGINFO)
 
         if response.status_code == 200:
             data = response.json()
-            xbmc.log('Series details obtained: {}'.format(data), xbmc.LOGDEBUG)
+            xbmc.log('Series details obtained: {}'.format(data), xbmc.LOGINFO)
 
             if 'poster_path' in data.keys() and data['poster_path'] is not None:
                 get_art(data['poster_path'])
@@ -112,34 +115,33 @@ def get_data(key: str) -> dict:
 
 
 def update_listitem(li: xbmcgui.ListItem, data: dict):
-
     try:
         tag = li.getVideoInfoTag()
-        try :
+        try:
             tag.setTitle(data['title'])
         except KeyError:
             pass
-        try :
+        try:
             tag.setPlot(data['overview'])
         except KeyError:
             pass
-        try :
+        try:
             tag.setRating(data['vote_average'])
         except KeyError:
             pass
-        try :
+        try:
             tag.setOriginalTitle(data['original_title'])
         except KeyError:
             pass
-        try :
+        try:
             tag.setYear(int(data['release_date'][:4]))
         except KeyError:
             pass
-        try :
+        try:
             tag.setDuration(int(data['runtime']) * 60)
         except KeyError:
             pass
-        try :
+        try:
             tag.setTagLine(data['tagline'])
         except KeyError:
             pass
@@ -149,12 +151,18 @@ def update_listitem(li: xbmcgui.ListItem, data: dict):
             xbmc.log('Poster path: {}'.format(local_path), xbmc.LOGDEBUG)
             li.setArt({"poster": local_path})
 
+        if 'backdrop_path' in data.keys() and data['backdrop_path'] is not None and data['backdrop_path'] != '':
+            local_path = COVERART_FOLDER + data['backdrop_path']
+            xbmc.log('Poster path: {}'.format(local_path), xbmc.LOGDEBUG)
+            li.setArt({"fanart": local_path})
+
+
+
     except Exception as e:
         xbmc.log(e.__str__(), xbmc.LOGDEBUG)
 
 
 def get_art(m_id: str):
-
     if not xbmcvfs.exists(COVERART_FOLDER):
         xbmcvfs.mkdir(COVERART_FOLDER)
         xbmc.log('Coverart folder created', xbmc.LOGDEBUG)
@@ -173,7 +181,7 @@ def get_art(m_id: str):
 def update_details_tmdb(filename: str):
     # xbmc.log('Update library called', xbmc.LOGDEBUG)
 
-    query = filename.split(',')[0]
+    query = filename.split(',')[0].split('(')[0]
     data = get_movie_info(query)
 
     if data is not None:
@@ -232,6 +240,25 @@ def set_li_data(li: xbmcgui.ListItem):
         update_listitem(li, movie_details)
 
 
+def set_tmdb_key(addon):
+    settings = addon.getSettings()
+    tmdb_key = settings.getString('tmdb-api-key')
+    if len(tmdb_key) == 0:
+        key_file = settings.getString('tmdb-key-file')
+        with open(key_file) as f:
+            tmdb_key = f.read().strip()
+
+        if len(tmdb_key) == 0:
+            xbmcgui.Dialog().notification('UložTo Disk', addon.getLocalizedString(30017), xbmcgui.NOTIFICATION_ERROR,
+                                          3000)
+            exit(0)
+        else:
+            TMDB_REQUEST_HEADERS['Authorization'] = 'Bearer ' + tmdb_key
+            settings.setString(id='tmdb-api-key', value=tmdb_key)
+    else:
+        TMDB_REQUEST_HEADERS['Authorization'] = 'Bearer ' + tmdb_key
+
+
 if __name__ == "__main__":
     # initialize plugin settings
 
@@ -245,8 +272,9 @@ if __name__ == "__main__":
     DATA_FOLDER = xbmcvfs.translatePath(addon.getAddonInfo('profile'))
     COVERART_FOLDER = DATA_FOLDER + 'coverart'
     DB_FILENAME = DATA_FOLDER + DB_FILE
-    settings = xbmcaddon.Addon().getSettings()
+    settings = addon.getSettings()
     lang = settings.getString('language')
+    set_tmdb_key(addon)
 
     pd = xbmcgui.DialogProgress()
     pd.create(addon.getLocalizedString(30010), addon.getLocalizedString(30011))

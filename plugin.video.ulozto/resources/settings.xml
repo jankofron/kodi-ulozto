@@ -6,5 +6,7 @@
         <setting label="30003" type="text" id="api-token" default=""/>
         <setting label="30004" type="text" id="root-folder" default=""/>
         <setting label="30014" type="text" id="language" default="en"/>
+        <setting label="30016" type="file" id="tmdb-key-file" default=""/>
+        <setting label="30018" type="text" id="tmdb-api-key" default=""/>
     </category>
 </settings>
