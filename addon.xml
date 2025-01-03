@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repository.ulozto" name="Kodi Uloz.to repository" version="1.0.0" provider-name="jankofron">
+<extension point="xbmc.addon.repository" name="Uloz.to Kodi repository">
+  <dir minversion="21.0.0">
+    <info>https://raw.githubusercontent.com/jankofron/kodi-ulozto/refs/heads/main/addons.xml</info>
+    <checksum>https://raw.githubusercontent.com/jankofron/kodi-ulozto/refs/heads/main/addons.xml.md5</checksum>
+    <datadir zip="true">https://raw.githubusercontent.com/jankofron/kodi-ulozto/refs/heads/main/</datadir>
+    <hashes>false</hashes>
+  </dir>
+</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Kodi 21 Uloz.to repository</summary>
+		<description></description>
+		<platform>all</platform>
+		<assets>
+			<icon>icon.png</icon>
+		</assets>
+	</extension>
+</addon>
+
