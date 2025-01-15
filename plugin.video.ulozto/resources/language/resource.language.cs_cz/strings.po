@@ -77,3 +77,34 @@ msgctxt "#30018"
 msgid "TMDB API key"
 msgstr "TMDB API klíč"
 
+msgctxt "#30019"
+msgid "Record updated"
+msgstr "Záznam aktualizován"
+
+msgctxt "#30020"
+msgid "Delete item"
+msgstr "Smazat soubor"
+
+msgctxt "#30021"
+msgid "Do you want to really delete the file \n{}\nfrom the Uložto Disk?"
+msgstr "Opravdu chcete smazat soubor \n{}\nz Uložto Disku?"
+
+msgctxt "#30022"
+msgid "File successfully deleted"
+msgstr "Soubor úspěšně smazán"
+
+msgctxt "#30023"
+msgid "File could not be deleted"
+msgstr "Chyba při mazání souboru"
+
+msgctxt "#30024"
+msgid "DELETED: {}"
+msgstr "SMAZÁNO: {}"
+
+msgctxt "#30025"
+msgid "Remove the item info?"
+msgstr "Smazat informace o položce?"
+
+msgctxt "#30026"
+msgid "Reset item"
+msgstr "Obnovit položku"

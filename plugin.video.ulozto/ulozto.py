@@ -1,3 +1,5 @@
+import time
+
 import xbmcgui
 import xbmcplugin
 import xbmc
@@ -114,21 +116,29 @@ def get_remote_files(folderslug):
 def list_videos(folderslug):
     # first list folders
     folders = get_subfolders(folderslug, plugin_url)
-    for folder in folders:
+    for idx in range(len(folders)):
+        folder = folders[idx]
         li = xbmcgui.ListItem(label=folder[0])
-        li.setProperties({'session-key': session.headers['X-User-Token']})
+        li.setProperties({'session-key': session.headers['X-User-Token'],
+                          'item-index': idx})
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=folder[1], listitem=li, isFolder=True)
+
+    folder_cnt = len(folders)
 
     # now add the movies
     movies = get_remote_files(folderslug)
-    for item in movies:
+    for idx in range(len(movies)):
+        item = movies[idx]
         li = xbmcgui.ListItem(item[0])
-        li.setProperties({'session-key': session.headers['X-User-Token']})
-        url = item[1]
+        li.setProperties({'session-key': session.headers['X-User-Token'],
+                          'file-slug': item[1],
+                          'parent-folder-slug': folderslug,
+                          'item-index': idx + folder_cnt})
+
         tmdb.set_li_data(li)
 
         xbmcplugin.addDirectoryItem(handle=addon_handle,
-                                    url=f'{plugin_url}?user-token={session.headers["X-User-Token"]}&action=play&video={url}&name={item[0]}',
+                                    url=f'{plugin_url}?user-token={session.headers["X-User-Token"]}&action=play&video={item[1]}&name={item[0]}',
                                     listitem=li, isFolder=False)
 
     xbmcplugin.endOfDirectory(addon_handle)
@@ -148,6 +158,14 @@ def play_video(name, fileslug):
     xbmc.Player().play(link, play_item)
 
 
+def delete_file(file_slug: str) -> bool:
+    res = session.delete(url=f"https://{API_HOST}/v6/file/{file_slug}/private")
+    if res.status_code == 204:
+        return True
+    else:
+        return False
+
+
 def router(params):
     """
     Router function that calls other functions
@@ -162,7 +180,9 @@ def router(params):
         if params['action'] == 'listing':
             # Display the list of videos in a provided category.
             tmdb.ensure_db()
+
             list_videos(params['folder'])
+
         elif params['action'] == 'play':
             # Play a video from a provided URL.
             play_video(params['name'], params['video'])

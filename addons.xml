@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<addons><addon id="plugin.video.ulozto" name="Ulož.to Disk" version="2.1.1" provider-name="Jan Kofroň">
+<addons><addon id="plugin.video.ulozto" name="Ulož.to Disk" version="2.2.0" provider-name="Jan Kofroň">
   <requires>
     <import addon="xbmc.python" version="3.0.1" />
     <import addon="xbmc.gui" version="5.17.0" />
@@ -31,6 +31,14 @@
      </item>
      <item library="update_item.py">
        <label>30013</label>
+       <visible>String.Contains(Container.FolderPath,plugin.video.ulozto)</visible>
+     </item>
+     <item library="reset_item.py">
+       <label>30026</label>
+       <visible>String.Contains(Container.FolderPath,plugin.video.ulozto)</visible>
+     </item>
+     <item library="delete_item.py">
+       <label>30020</label>
        <visible>String.Contains(Container.FolderPath,plugin.video.ulozto)</visible>
      </item>
    </menu>

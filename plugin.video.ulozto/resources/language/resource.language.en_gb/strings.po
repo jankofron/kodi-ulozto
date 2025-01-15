@@ -77,3 +77,35 @@ msgctxt "#30018"
 msgid "TMDB API key"
 msgstr "TMDB API key"
 
+msgctxt "#30019"
+msgid "Record updated"
+msgstr "Record updated"
+
+msgctxt "#30020"
+msgid "Delete item"
+msgstr "Delete item"
+
+msgctxt "#30021"
+msgid "Do you want to really delete the file \n{}\nfrom the Uložto Disk?"
+msgstr "Do you want to really delete the file \n{}\nfrom the Uložto Disk?"
+
+msgctxt "#30022"
+msgid "File successfully deleted"
+msgstr "File successfully deleted"
+
+msgctxt "#30023"
+msgid "File could not be deleted"
+msgstr "File could not be deleted"
+
+msgctxt "#30024"
+msgid "DELETED: {}"
+msgstr "DELETED: {}"
+
+msgctxt "#30025"
+msgid "Remove the item info?"
+msgstr "Remove the item info?"
+
+msgctxt "#30026"
+msgid "Reset item"
+msgstr "Reset item"
+

@@ -113,6 +113,15 @@ def get_data(key: str) -> dict:
     else:
         return None
 
+def reset_item(name: str) -> bool:
+    db_path = xbmcvfs.translatePath(DB_FILENAME)
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute('delete from movies where key=?', (name,))
+    conn.commit()
+    conn.close()
+    return True
+
 
 def update_listitem(li: xbmcgui.ListItem, data: dict):
     try:

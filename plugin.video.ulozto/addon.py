@@ -26,4 +26,3 @@ if __name__ == '__main__':
             exit(0)
 
     ulozto_api.router(params)
-
