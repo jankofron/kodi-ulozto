@@ -150,6 +150,10 @@ def play_video(name, fileslug):
 
     play_item = xbmcgui.ListItem(path=link)
     details = tmdb.get_data(name)
+    if details is None:
+        details = dict()
+        details['title'] = name
+
     tmdb.update_listitem(play_item, details)
 
     # Pass the item to the Kodi player.

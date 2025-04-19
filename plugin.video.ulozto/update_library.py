@@ -162,7 +162,7 @@ def update_listitem(li: xbmcgui.ListItem, data: dict):
 
         if 'backdrop_path' in data.keys() and data['backdrop_path'] is not None and data['backdrop_path'] != '':
             local_path = COVERART_FOLDER + data['backdrop_path']
-            xbmc.log('Poster path: {}'.format(local_path), xbmc.LOGDEBUG)
+            xbmc.log('Fanart path: {}'.format(local_path), xbmc.LOGDEBUG)
             li.setArt({"fanart": local_path})
 
 
