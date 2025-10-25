@@ -1,5 +1,3 @@
-import time
-
 import xbmcgui
 import xbmcplugin
 import xbmc
@@ -57,6 +55,7 @@ def authenticate():
         user_token_response.raise_for_status()
 
         session.headers["X-User-Token"] = user_token_response.json()['token_id']
+        xbmcgui.Window(10000).setProperty('ulozto-plugin-user-token', session.headers["X-User-Token"])
         ROOT_FOLDER_SLUG = user_token_response.json()['session']['user']['root_folder_slug']
         settings = xbmcaddon.Addon().getSettings()
         RECS_FOLDER_SLUG = get_remote_slug(settings.getString('root-folder'))
@@ -79,7 +78,7 @@ def get_subfolders(parent_folder_slug, plugin_url=''):
                                       verify=should_verify)
     root_folder_content.raise_for_status()
     subfolders = root_folder_content.json()['subfolders']
-    return [[i['name'], f'{plugin_url}?user-token={session.headers["X-User-Token"]}&action=listing&folder={i["slug"]}',
+    return [[i['name'], f'{plugin_url}?action=listing&folder={i["slug"]}',
              i['slug']]
             for i in subfolders]
 
@@ -119,8 +118,7 @@ def list_videos(folderslug):
     for idx in range(len(folders)):
         folder = folders[idx]
         li = xbmcgui.ListItem(label=folder[0])
-        li.setProperties({'session-key': session.headers['X-User-Token'],
-                          'item-index': idx})
+        li.setProperties({'item-index': idx})
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=folder[1], listitem=li, isFolder=True)
 
     folder_cnt = len(folders)
@@ -130,36 +128,43 @@ def list_videos(folderslug):
     for idx in range(len(movies)):
         item = movies[idx]
         li = xbmcgui.ListItem(item[0])
-        li.setProperties({'session-key': session.headers['X-User-Token'],
-                          'file-slug': item[1],
+        li.setProperties({'file-slug': item[1],
                           'parent-folder-slug': folderslug,
                           'item-index': idx + folder_cnt})
+        li.setProperty('IsPlayable', 'true')
 
         tmdb.set_li_data(li)
 
         xbmcplugin.addDirectoryItem(handle=addon_handle,
-                                    url=f'{plugin_url}?user-token={session.headers["X-User-Token"]}&action=play&video={item[1]}&name={item[0]}',
+                                    url=f'{plugin_url}?action=play&video={item[1]}&name={item[0]}',
                                     listitem=li, isFolder=False)
 
     xbmcplugin.endOfDirectory(addon_handle)
 
 
-def play_video(name, fileslug):
-    # Create a playable item with a path to play.
-    link = get_download_link(fileslug)
+def play_video(handle, name, fileslug):
+    # Build the real (dynamic) stream URL
+    stream_url = get_download_link(fileslug)
+    if not stream_url:
+        xbmc.log("UlozTo: no stream URL", xbmc.LOGERROR)
+        xbmcplugin.setResolvedUrl(handle, False, xbmcgui.ListItem())
+        return
 
-    play_item = xbmcgui.ListItem(path=link)
-    details = tmdb.get_data(name)
-    if details is None:
-        details = dict()
-        details['title'] = name
+    li = xbmcgui.ListItem(path=stream_url)
+    li.setProperty('IsPlayable', 'true')
 
-    tmdb.update_listitem(play_item, details)
+    # (Optional) add metadata/art so it shows in OSD/history
+    details = tmdb.get_data(name) or {'title': name}
+    tmdb.update_listitem(li, details)
 
-    # Pass the item to the Kodi player.
+    # (Optional) If you know duration, help Kodi’s resume logic:
+    # tag = li.getVideoInfoTag()
+    # tag.setDuration(runtime_seconds)  # Kodi 20+
 
-    xbmc.log('UlozTo: Trying to play: ' + link, xbmc.LOGDEBUG)
-    xbmc.Player().play(link, play_item)
+    xbmc.log('UlozTo: Trying to play: ' + stream_url, xbmc.LOGINFO)
+    xbmcplugin.setResolvedUrl(handle, True, li)
+    # IMPORTANT: return immediately after resolving
+    return
 
 
 def delete_file(file_slug: str) -> bool:
@@ -189,7 +194,8 @@ def router(params):
 
         elif params['action'] == 'play':
             # Play a video from a provided URL.
-            play_video(params['name'], params['video'])
+            play_video(int(xbmcgui.Window(10000).getProperty('ulozto-plugin-handle')), params['name'], params['video'])
+
     else:
         if session is not None:
             tmdb.ensure_db()

@@ -109,3 +109,7 @@ msgctxt "#30026"
 msgid "Reset item"
 msgstr "Reset item"
 
+msgctxt "#30027"
+msgid "Play cached"
+msgstr "Play cached"
+

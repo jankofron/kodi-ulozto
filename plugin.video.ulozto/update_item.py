@@ -12,7 +12,6 @@ if __name__ == "__main__":
     res = xbmcgui.Dialog().numeric(0, addon.getLocalizedString(30009), defaultt='')
 
     if res != '':  # cancel not pressed
-        addon = xbmcaddon.Addon()
         tmdb.DATA_FOLDER = xbmcvfs.translatePath(addon.getAddonInfo('profile'))
         tmdb.COVERART_FOLDER = tmdb.DATA_FOLDER + 'coverart'
         tmdb.DB_FILENAME = tmdb.DATA_FOLDER + tmdb.DB_FILE

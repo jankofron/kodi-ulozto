@@ -245,6 +245,7 @@ def update_library(slug: str):
 
 def set_li_data(li: xbmcgui.ListItem):
     movie_details = get_data(li.getLabel())
+    li.getVideoInfoTag().setMediaType('movie')
     if movie_details is not None:
         update_listitem(li, movie_details)
 

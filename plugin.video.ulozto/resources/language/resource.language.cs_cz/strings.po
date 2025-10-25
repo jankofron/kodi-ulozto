@@ -108,3 +108,8 @@ msgstr "Smazat informace o položce?"
 msgctxt "#30026"
 msgid "Reset item"
 msgstr "Obnovit položku"
+
+msgctxt "#30027"
+msgid "Play cached"
+msgstr "Přehrát skrz cache"
+

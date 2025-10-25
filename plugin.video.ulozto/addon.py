@@ -1,3 +1,4 @@
+import xbmcgui
 import xbmcplugin
 import sys
 from urllib.parse import parse_qsl
@@ -13,10 +14,14 @@ if __name__ == '__main__':
     # parsing parameters from Kodi
     params = dict(parse_qsl(sys.argv[2][1:]))
 
+    win = xbmcgui.Window(10000)
+    if ulozto_api.addon_handle != -1:
+        win.setProperty('ulozto-plugin-handle', str(ulozto_api.addon_handle))
+
+
     user_token = None
-    if 'user-token' in params.keys():
-        user_token = params['user-token']
-        ulozto_api.initialize(user_token)
+    if win.getProperty('ulozto-plugin-user-token') != '':
+        ulozto_api.initialize(win.getProperty('ulozto-plugin-user-token'))
 
     else:
         ulozto_api.initialize()
