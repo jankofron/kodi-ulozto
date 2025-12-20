@@ -17,17 +17,17 @@ REQUEST_TIMEOUT = 30  # seconds
 UPLOAD_TIMEOUT = 600  # seconds
 
 should_verify = True
-global addon_handle
-global session
-global plugin_url
-global addon
+session = None
+plugin_url = None
+addon_handle = -1
+addon = None
 
-global LOGIN
-global AUTH_TOKEN
-global RECS_FOLDER_SLUG
-global ROOT_FOLDER_SLUG
-global API_TOKEN
-global DEVICE_ID
+LOGIN = None
+AUTH_TOKEN = None
+RECS_FOLDER_SLUG = None
+ROOT_FOLDER_SLUG = None
+API_TOKEN = None
+DEVICE_ID = None
 
 
 def show_notification(text):
@@ -59,6 +59,9 @@ def authenticate():
         ROOT_FOLDER_SLUG = user_token_response.json()['session']['user']['root_folder_slug']
         settings = xbmcaddon.Addon().getSettings()
         RECS_FOLDER_SLUG = get_remote_slug(settings.getString('root-folder'))
+        win = xbmcgui.Window(10000)
+        win.setProperty('ulozto-plugin-root-folder-slug', ROOT_FOLDER_SLUG or '')
+        win.setProperty('ulozto-plugin-recs-folder-slug', RECS_FOLDER_SLUG or '')
 
         xbmc.log('UlozTo: Login Successful', xbmc.LOGDEBUG)
 
@@ -181,6 +184,8 @@ def router(params):
     depending on the provided paramstring
     """
 
+    global RECS_FOLDER_SLUG
+
     # Parse a URL-encoded paramstring to the dictionary of
     # {<parameter>: <value>} elements
 
@@ -198,6 +203,20 @@ def router(params):
 
     else:
         if session is not None:
+            # RECS_FOLDER_SLUG may be missing when we restore from cached session; recompute if needed
+            if RECS_FOLDER_SLUG is None:
+                settings = xbmcaddon.Addon().getSettings()
+                # If we don't know the root, re-authenticate to get it
+                if ROOT_FOLDER_SLUG is None:
+                    authenticate()
+                if ROOT_FOLDER_SLUG is not None:
+                    RECS_FOLDER_SLUG = get_remote_slug(settings.getString('root-folder'))
+                    xbmcgui.Window(10000).setProperty('ulozto-plugin-recs-folder-slug', RECS_FOLDER_SLUG or '')
+
+            if RECS_FOLDER_SLUG is None:
+                show_error(addon.getLocalizedString(30008))
+                return
+
             tmdb.ensure_db()
             list_videos(RECS_FOLDER_SLUG)
 
@@ -236,7 +255,15 @@ def initialize(user_token: str = None):
     global DEVICE_ID
     global session
     global RECS_FOLDER_SLUG
+    global ROOT_FOLDER_SLUG
     global addon
+
+    win = xbmcgui.Window(10000)
+    # Restore cached slugs (may be empty strings if not set)
+    root_prop = win.getProperty('ulozto-plugin-root-folder-slug')
+    recs_prop = win.getProperty('ulozto-plugin-recs-folder-slug')
+    ROOT_FOLDER_SLUG = root_prop if root_prop != '' else None
+    RECS_FOLDER_SLUG = recs_prop if recs_prop != '' else None
 
     # initialize plugin settings
     addon = xbmcaddon.Addon()

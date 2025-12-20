@@ -18,6 +18,7 @@ TMDB_REQUEST_HEADERS = {
     "accept": "application/json",
     "Authorization": "Key required"
 }
+TMDB_TIMEOUT = 10
 
 global pd
 global ROOT_FOLDER_SLUG
@@ -39,7 +40,11 @@ def get_movie_details_by_id(id: str) -> dict:
     url_series = URL_ID.format(SERIES, id, lang)
 
     xbmc.log('Getting movie details for {}'.format(id), xbmc.LOGINFO)
-    response = requests.get(url_movie, headers=TMDB_REQUEST_HEADERS)
+    try:
+        response = requests.get(url_movie, headers=TMDB_REQUEST_HEADERS, timeout=TMDB_TIMEOUT)
+    except requests.RequestException as exc:
+        xbmc.log('UlozTo: TMDB request failed for {}: {}'.format(id, exc), xbmc.LOGERROR)
+        return None
 
     if response.status_code == 200:
         data = response.json()
@@ -55,7 +60,11 @@ def get_movie_details_by_id(id: str) -> dict:
 
     else:
         # we try series
-        response = requests.get(url_series, headers=TMDB_REQUEST_HEADERS)
+        try:
+            response = requests.get(url_series, headers=TMDB_REQUEST_HEADERS, timeout=TMDB_TIMEOUT)
+        except requests.RequestException as exc:
+            xbmc.log('UlozTo: TMDB series request failed for {}: {}'.format(id, exc), xbmc.LOGERROR)
+            return None
         xbmc.log('Session headers: {}'.format(str(TMDB_REQUEST_HEADERS)), xbmc.LOGINFO)
 
         if response.status_code == 200:
@@ -76,9 +85,17 @@ def get_movie_info(title: str) -> dict:
     url = URL.format(title, lang)
 
     xbmc.log('Getting movie details for {}'.format(title), xbmc.LOGDEBUG)
-    response = requests.get(url, headers=TMDB_REQUEST_HEADERS)
+    try:
+        response = requests.get(url, headers=TMDB_REQUEST_HEADERS, timeout=TMDB_TIMEOUT)
+    except requests.RequestException as exc:
+        xbmc.log('UlozTo: TMDB search failed for {}: {}'.format(title, exc), xbmc.LOGERROR)
+        return None
     # xbmc.log('Session headers: {}'.format(str(TMDB_REQUEST_HEADERS)), xbmc.LOGDEBUG)
-    data = response.json()
+    try:
+        data = response.json()
+    except ValueError:
+        xbmc.log('UlozTo: TMDB returned non-JSON payload for {}'.format(title), xbmc.LOGERROR)
+        return None
     xbmc.log('Movie details obtained: {}'.format(data), xbmc.LOGDEBUG)
     results = data.get('results')
     return results[0] if results is not None and len(results) > 0 else None
@@ -179,7 +196,11 @@ def get_art(m_id: str):
     local_path = COVERART_FOLDER + m_id
     if not xbmcvfs.exists(local_path):
         image_path = IMAGE_URL.format(m_id)
-        image = requests.get(image_path).content
+        try:
+            image = requests.get(image_path, timeout=TMDB_TIMEOUT).content
+        except requests.RequestException as exc:
+            xbmc.log('UlozTo: TMDB art download failed for {}: {}'.format(m_id, exc), xbmc.LOGERROR)
+            return
         # xbmc.log('Getting the coverart', xbmc.LOGDEBUG)
         with open(local_path, 'wb') as f:
             f.write(image)
@@ -252,21 +273,35 @@ def set_li_data(li: xbmcgui.ListItem):
 
 def set_tmdb_key(addon):
     settings = addon.getSettings()
-    tmdb_key = settings.getString('tmdb-api-key')
+    tmdb_key = settings.getString('tmdb-api-key').strip()
     if len(tmdb_key) == 0:
         key_file = settings.getString('tmdb-key-file')
-        with open(key_file) as f:
-            tmdb_key = f.read().strip()
-
-        if len(tmdb_key) == 0:
+        if len(key_file) == 0:
+            xbmc.log('UlozTo: TMDB API key not configured', xbmc.LOGERROR)
             xbmcgui.Dialog().notification('UložTo Disk', addon.getLocalizedString(30017), xbmcgui.NOTIFICATION_ERROR,
                                           3000)
-            exit(0)
-        else:
-            TMDB_REQUEST_HEADERS['Authorization'] = 'Bearer ' + tmdb_key
-            settings.setString(id='tmdb-api-key', value=tmdb_key)
-    else:
-        TMDB_REQUEST_HEADERS['Authorization'] = 'Bearer ' + tmdb_key
+            return False
+
+        file_path = xbmcvfs.translatePath(key_file)
+        try:
+            with open(file_path, encoding='utf-8') as f:
+                tmdb_key = f.read().strip()
+        except OSError as exc:
+            xbmc.log('UlozTo: Unable to read TMDB key file {}: {}'.format(file_path, exc), xbmc.LOGERROR)
+            xbmcgui.Dialog().notification('UložTo Disk', addon.getLocalizedString(30017), xbmcgui.NOTIFICATION_ERROR,
+                                          3000)
+            return False
+
+        if len(tmdb_key) == 0:
+            xbmc.log('UlozTo: TMDB key file {} is empty'.format(file_path), xbmc.LOGERROR)
+            xbmcgui.Dialog().notification('UložTo Disk', addon.getLocalizedString(30017), xbmcgui.NOTIFICATION_ERROR,
+                                          3000)
+            return False
+
+        settings.setString(id='tmdb-api-key', value=tmdb_key)
+
+    TMDB_REQUEST_HEADERS['Authorization'] = 'Bearer ' + tmdb_key
+    return True
 
 
 if __name__ == "__main__":
@@ -284,7 +319,8 @@ if __name__ == "__main__":
     DB_FILENAME = DATA_FOLDER + DB_FILE
     settings = addon.getSettings()
     lang = settings.getString('language')
-    set_tmdb_key(addon)
+    if not set_tmdb_key(addon):
+        exit(0)
 
     pd = xbmcgui.DialogProgress()
     pd.create(addon.getLocalizedString(30010), addon.getLocalizedString(30011))

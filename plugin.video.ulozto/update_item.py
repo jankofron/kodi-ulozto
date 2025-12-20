@@ -17,7 +17,8 @@ if __name__ == "__main__":
         tmdb.DB_FILENAME = tmdb.DATA_FOLDER + tmdb.DB_FILE
         settings = xbmcaddon.Addon().getSettings()
         tmdb.lang = settings.getString('language')
-        tmdb.set_tmdb_key(addon)
+        if not tmdb.set_tmdb_key(addon):
+            sys.exit(0)
 
         success = tmdb.update_details_tmdb_by_id(sys.listitem.getLabel(), res)
 
