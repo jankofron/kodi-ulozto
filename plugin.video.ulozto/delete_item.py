@@ -7,13 +7,17 @@ import ulozto
 if __name__ == "__main__":
 
     addon = xbmcaddon.Addon()
+    item: xbmcgui.ListItem = sys.listitem
 
     res = xbmcgui.Dialog().yesno(addon.getLocalizedString(30020),
                                  addon.getLocalizedString(30021).format(sys.listitem.getLabel()))
 
     if res:
-        item: xbmcgui.ListItem = sys.listitem
-        ulozto.initialize(item.getProperty('session-key'))
+        session_key = item.getProperty('session-key') or xbmcgui.Window(10000).getProperty('ulozto-plugin-user-token')
+        ulozto.initialize(session_key or None)
+        if not session_key:
+            ulozto.authenticate()
+            session_key = ulozto.session.headers.get("X-User-Token", "") if ulozto.session else ''
         res = ulozto.delete_file(item.getProperty('file-slug'))
 
         if res:
@@ -22,13 +26,11 @@ if __name__ == "__main__":
                                           3000)
             # Refresh the container with the new URL
             plugin_url = 'plugin://' + sys.argv[0].strip('/')
-            item: xbmcgui.ListItem = sys.listitem
-            url = f"{plugin_url}?user-token={item.getProperty('session-key')}&action=listing&folder={item.getProperty('parent-folder-slug')}"
+            url = f"{plugin_url}?user-token={session_key}&action=listing&folder={item.getProperty('parent-folder-slug')}"
             xbmc.executebuiltin(f'Container.Update({url})')
         else:
             xbmcgui.Dialog().notification('UložTo Disk', addon.getLocalizedString(30023), xbmcgui.NOTIFICATION_ERROR,
                                           3000)
-
 
     else:
         pass

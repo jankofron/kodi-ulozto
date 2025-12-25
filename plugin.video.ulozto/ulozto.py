@@ -1,11 +1,13 @@
-import xbmcgui
-import xbmcplugin
+import socket
+
+import requests
 import xbmc
 import xbmcaddon
+import xbmcgui
+import xbmcplugin
 import xbmcvfs
 from requests import HTTPError
-import requests
-import socket
+
 import update_library as tmdb
 
 API_HOST = 'apis.uloz.to'

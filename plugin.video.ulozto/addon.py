@@ -18,7 +18,6 @@ if __name__ == '__main__':
     if ulozto_api.addon_handle != -1:
         win.setProperty('ulozto-plugin-handle', str(ulozto_api.addon_handle))
 
-
     user_token = None
     if win.getProperty('ulozto-plugin-user-token') != '':
         ulozto_api.initialize(win.getProperty('ulozto-plugin-user-token'))
