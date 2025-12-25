@@ -112,7 +112,13 @@ def get_remote_files(folderslug):
     filelist = list()
 
     for file in files.json()['items']:
-        filelist.append([file['name'][:-len(file['extension']) - 1], file['slug']])
+        try:
+            if not file['is_in_trash']:
+                filelist.append([file['name'][:-len(file['extension']) - 1], file['slug']])
+            else:
+                pass
+        except IndexError:  
+            pass
 
     return filelist
 
@@ -144,7 +150,7 @@ def list_videos(folderslug):
                                     url=f'{plugin_url}?action=play&video={item[1]}&name={item[0]}',
                                     listitem=li, isFolder=False)
 
-    xbmcplugin.endOfDirectory(addon_handle)
+    xbmcplugin.endOfDirectory(addon_handle, updateListing=True, cacheToDisc=False)
 
 
 def play_video(handle, name, fileslug):

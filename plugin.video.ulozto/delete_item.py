@@ -27,7 +27,7 @@ if __name__ == "__main__":
             # Refresh the container with the new URL
             plugin_url = 'plugin://' + sys.argv[0].strip('/')
             url = f"{plugin_url}?user-token={session_key}&action=listing&folder={item.getProperty('parent-folder-slug')}"
-            xbmc.executebuiltin(f'Container.Update({url})')
+            xbmc.executebuiltin(f'Container.Update(\"{url}\", True)')
         else:
             xbmcgui.Dialog().notification('UložTo Disk', addon.getLocalizedString(30023), xbmcgui.NOTIFICATION_ERROR,
                                           3000)
