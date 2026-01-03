@@ -117,7 +117,7 @@ def get_remote_files(folderslug):
                 filelist.append([file['name'][:-len(file['extension']) - 1], file['slug']])
             else:
                 pass
-        except IndexError:  
+        except IndexError:
             pass
 
     return filelist
@@ -150,7 +150,8 @@ def list_videos(folderslug):
                                     url=f'{plugin_url}?action=play&video={item[1]}&name={item[0]}',
                                     listitem=li, isFolder=False)
 
-    xbmcplugin.endOfDirectory(addon_handle, updateListing=True, cacheToDisc=False)
+    # Use normal navigation so Kodi maintains the container stack (needed for ".." to work)
+    xbmcplugin.endOfDirectory(addon_handle, updateListing=False, cacheToDisc=True)
 
 
 def play_video(handle, name, fileslug):
